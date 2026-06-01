@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>HMS - @yield('title', 'HMS')</title>
+    <title>MSA - @yield('title', 'MSA')</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,7 +40,7 @@
         <div class="container">
 
             <!-- Brand -->
-            <a class="navbar-brand fw-bold" href="/dashboard">HMS</a>
+            <a class="navbar-brand fw-bold" href="/dashboard">MSA</a>
 
             <!-- Mobile Toggle -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -68,23 +68,33 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/doctors">
-                                Doctors
+                            <a class="nav-link" href="/employees">
+                                Employees
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/patients">
-                                Patients
+                            <a class="nav-link" href="/employees">
+                                Employees Attendance
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/appointments">
-                                Appointments
+                            <a class="nav-link" href="/chicken-1">
+                                Chicken 1
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/pharmacy">
-                                Pharmacy
+                            <a class="nav-link" href="/chicken-2">
+                                Chicken 2
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/beef">
+                                Beef
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/roti">
+                                Roti
                             </a>
                         </li>
                         <li class="nav-item">
@@ -98,11 +108,6 @@
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">
                                 Login
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->is('register') ? 'active' : '' }}" href="/register">
-                                Register
                             </a>
                         </li>
                     @endguest

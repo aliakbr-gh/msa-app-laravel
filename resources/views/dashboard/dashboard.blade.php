@@ -7,16 +7,11 @@
 @section('content')
     <div class="text-center">
         @auth
-            <h5 class="mb-3">Welcome, {{ auth()->user()->username }}</h5>
-
-            <form onsubmit="logoutUser(event)">
+            <h4 class="mb-3">Welcome, {{ auth()->user()->username }}</h4>
+            {{-- <form onsubmit="logoutUser(event)">
                 @csrf
                 <button class="btn btn-danger">Logout</button>
-            </form>
-
-            <p>{{ auth()->user()->role === "admin" ? "a" : "d" }}</p>
-
-            <p>{{ auth()->user()->role === "pharmacy" ? "Phhhhaaaaaa" : "d" }}</p>
+            </form> --}}
         @endauth
     </div>
 

@@ -24,7 +24,7 @@ class SetupController extends Controller
             's_key' => 'required',
         ]);
 
-        $correct_s_key = "HnPmS12345";
+        $correct_s_key = "mSa12345";
 
         if($request->s_key !== $correct_s_key){
             return APIResponse::error("Setup Secret Key is incorrect");
@@ -41,8 +41,7 @@ class SetupController extends Controller
         $roles = [
             'superadmin',
             'admin',
-            'reception',
-            'pharmacy',
+            'user',
         ];
 
         foreach ($roles as $role) {
