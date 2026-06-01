@@ -9,9 +9,9 @@ use Illuminate\Validation\Rule;
 
 class OrderRecordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = OrderRecord::latest('order_date')->latest('id')->paginate(10)->withQueryString();
+        $orders = OrderRecord::latest('order_date')->latest('id')->paginate($this->perPage($request))->withQueryString();
 
         return response()->view('orders.index', compact('orders'));
     }

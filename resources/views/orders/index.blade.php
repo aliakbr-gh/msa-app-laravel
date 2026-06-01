@@ -8,6 +8,7 @@
         <div class="mb-3">
             <a href="/orders/create" class="btn btn-primary">Create Order</a>
         </div>
+        @include('partials.per-page', ['paginator' => $orders])
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
@@ -52,7 +53,9 @@
             </table>
         </div>
 
-        {{ $orders->links() }}
+        @if ($orders->hasPages())
+            {{ $orders->links() }}
+        @endif
     </div>
 
     <script>

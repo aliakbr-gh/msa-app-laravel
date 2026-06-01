@@ -8,6 +8,7 @@
         <div class="mb-3">
             <a href="/kitchen/create" class="btn btn-primary">Create Kitchen Record</a>
         </div>
+        @include('partials.per-page', ['paginator' => $records])
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
@@ -43,7 +44,9 @@
             </table>
         </div>
 
-        {{ $records->links() }}
+        @if ($records->hasPages())
+            {{ $records->links() }}
+        @endif
     </div>
 
     <script>

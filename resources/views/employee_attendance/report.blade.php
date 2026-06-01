@@ -17,6 +17,8 @@
             </div>
         </form>
 
+        @include('partials.per-page', ['paginator' => $employees])
+
         <div class="table-responsive">
             <table class="table table-sm table-bordered align-middle text-center">
                 <thead class="table-dark">
@@ -58,6 +60,8 @@
             </table>
         </div>
 
-        {{ $employees->links() }}
+        @if ($employees->hasPages())
+            {{ $employees->links() }}
+        @endif
     </div>
 @endsection

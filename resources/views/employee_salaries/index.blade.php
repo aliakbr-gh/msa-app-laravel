@@ -33,6 +33,8 @@
             </div>
         </form>
 
+        @include('partials.per-page', ['paginator' => $payments])
+
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
                 <thead class="table-dark">
@@ -60,7 +62,9 @@
             </table>
         </div>
 
-        {{ $payments->links() }}
+        @if ($payments->hasPages())
+            {{ $payments->links() }}
+        @endif
     </div>
 
     <script>

@@ -85,6 +85,7 @@
                         <li class="nav-item"><a class="nav-link {{ request()->is('chicken-2*') ? 'active' : '' }}" href="/chicken-2">Chicken 2</a></li>
                         <li class="nav-item"><a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">Orders</a></li>
                         <li class="nav-item"><a class="nav-link {{ request()->is('kitchen*') ? 'active' : '' }}" href="/kitchen">Kitchen</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('reports*') ? 'active' : '' }}" href="/reports">Reports</a></li>
                         <li class="nav-item"><a class="nav-link" href="/backup/download">Backup</a></li>
                     @endauth
 

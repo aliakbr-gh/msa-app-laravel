@@ -11,6 +11,7 @@
                 Create Roles
             </a>
         </div>
+        @include('partials.per-page', ['paginator' => $roles])
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
                 <thead class="table-dark">
@@ -60,7 +61,9 @@
             </table>
         </div>
 
-        {{ $roles->links() }}
+        @if ($roles->hasPages())
+            {{ $roles->links() }}
+        @endif
 
     </div>
 

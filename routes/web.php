@@ -6,6 +6,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\KitchenRecordController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\OrderRecordController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\UserController;
@@ -62,6 +63,8 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{employee}', [EmployeeController::class, 'update']);
             Route::delete('/{employee}', [EmployeeController::class, 'destroy']);
         });
+
+        Route::get('/reports', [ReportsController::class, 'index']);
 
         Route::prefix('{module}')->whereIn('module', ['roti', 'beef', 'chicken-1', 'chicken-2'])->group(function () {
             Route::get('/', [LedgerController::class, 'index']);

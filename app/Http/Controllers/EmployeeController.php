@@ -13,9 +13,9 @@ use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::latest()->paginate(10)->withQueryString();
+        $employees = Employee::latest()->paginate($this->perPage($request))->withQueryString();
 
         return response()->view('employees.index', compact('employees'));
     }
@@ -84,7 +84,7 @@ class EmployeeController extends Controller
     public function attendance(Request $request)
     {
         $date = $request->query('date', now()->toDateString());
-        $employees = Employee::orderBy('full_name')->paginate(15)->withQueryString();
+        $employees = Employee::orderBy('full_name')->paginate($this->perPage($request, 25))->withQueryString();
         $attendances = EmployeeAttendance::whereDate('attendance_date', $date)
             ->pluck('status', 'employee_id');
         $summary = [
@@ -120,7 +120,7 @@ class EmployeeController extends Controller
 
     public function salaries()
     {
-        $payments = EmployeeSalaryPayment::with('employee')->latest('paid_on')->paginate(10)->withQueryString();
+        $payments = EmployeeSalaryPayment::with('employee')->latest('paid_on')->paginate($this->perPage($request))->withQueryString();
         $employees = Employee::orderBy('full_name')->get();
 
         return response()->view('employee_salaries.index', compact('payments', 'employees'));
@@ -147,7 +147,7 @@ class EmployeeController extends Controller
         $employees = Employee::with([
             'attendances' => fn ($query) => $query->whereBetween('attendance_date', [$startDate, $endDate]),
             'salaryPayments' => fn ($query) => $query->whereBetween('paid_on', [$startDate, $endDate]),
-        ])->orderBy('full_name')->paginate(10)->withQueryString();
+        ])->orderBy('full_name')->paginate($this->perPage($request))->withQueryString();
 
         return response()->view('employee_salaries.report', compact('employees', 'month'));
     }
@@ -165,7 +165,7 @@ class EmployeeController extends Controller
 
         $employees = Employee::with([
             'attendances' => fn ($query) => $query->whereBetween('attendance_date', [$startDate, $endDate]),
-        ])->orderBy('full_name')->paginate(8)->withQueryString();
+        ])->orderBy('full_name')->paginate($this->perPage($request))->withQueryString();
 
         return response()->view('employee_attendance.report', compact('employees', 'days', 'month'));
     }

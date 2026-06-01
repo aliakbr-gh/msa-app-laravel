@@ -14,6 +14,8 @@
             </div>
         </form>
 
+        @include('partials.per-page', ['paginator' => $employees])
+
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
                 <thead class="table-dark">
@@ -47,6 +49,8 @@
             </table>
         </div>
 
-        {{ $employees->appends(['month' => $month])->links() }}
+        @if ($employees->hasPages())
+            {{ $employees->appends(['month' => $month])->links() }}
+        @endif
     </div>
 @endsection

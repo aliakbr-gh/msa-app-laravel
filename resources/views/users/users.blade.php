@@ -11,6 +11,7 @@
                 Create User
             </a>
         </div>
+        @include('partials.per-page', ['paginator' => $users])
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
                 <thead class="table-dark">
@@ -73,7 +74,9 @@
             </table>
         </div>
 
-        {{ $users->links() }}
+        @if ($users->hasPages())
+            {{ $users->links() }}
+        @endif
 
     </div>
 

@@ -16,13 +16,13 @@ class LedgerController extends Controller
         'chicken-2' => ['title' => 'Chicken 2', 'has_qty' => true, 'qty_label' => 'Weight (Kg)', 'rate_label' => 'Farm Rate'],
     ];
 
-    public function index(string $module)
+    public function index(Request $request, string $module)
     {
         $config = $this->config($module);
         $entries = LedgerEntry::where('module', $module)
             ->orderByDesc('entry_date')
             ->orderByDesc('id')
-            ->paginate(10)
+            ->paginate($this->perPage($request))
             ->withQueryString();
 
         return response()->view('ledger.index', compact('entries', 'module', 'config'));

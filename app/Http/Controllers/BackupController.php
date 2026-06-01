@@ -13,7 +13,7 @@ class BackupController extends Controller
         $backupDirectory = storage_path('app/backups');
         File::ensureDirectoryExists($backupDirectory);
 
-        $fileName = 'msa-backup-'.now()->format('Y-m-d-His').'.zip';
+        $fileName = 'msa-app-backup-'.now('Asia/Karachi')->format('d-m-Y-h-i-A').'.zip';
         $zipPath = $backupDirectory.'/'.$fileName;
 
         $zip = new ZipArchive();

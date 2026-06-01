@@ -8,6 +8,7 @@
         <div class="mb-3">
             <a href="/{{ $module }}/create" class="btn btn-primary">Create Record</a>
         </div>
+        @include('partials.per-page', ['paginator' => $entries])
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
@@ -57,7 +58,9 @@
             </table>
         </div>
 
-        {{ $entries->links() }}
+        @if ($entries->hasPages())
+            {{ $entries->links() }}
+        @endif
     </div>
 
     <script>

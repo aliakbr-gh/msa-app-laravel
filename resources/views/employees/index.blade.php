@@ -11,6 +11,7 @@
             <a href="/employees/salaries" class="btn btn-outline-success">Salary Payments</a>
             <a href="/employees/report" class="btn btn-outline-dark">Monthly Report</a>
         </div>
+        @include('partials.per-page', ['paginator' => $employees])
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered align-middle text-center">
@@ -56,7 +57,9 @@
             </table>
         </div>
 
-        {{ $employees->links() }}
+        @if ($employees->hasPages())
+            {{ $employees->links() }}
+        @endif
     </div>
 
     <script>

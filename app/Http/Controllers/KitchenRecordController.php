@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class KitchenRecordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $records = KitchenRecord::latest()->paginate(10)->withQueryString();
+        $records = KitchenRecord::latest()->paginate($this->perPage($request))->withQueryString();
 
         return response()->view('kitchen.index', compact('records'));
     }

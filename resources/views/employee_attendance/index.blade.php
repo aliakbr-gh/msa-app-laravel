@@ -47,6 +47,8 @@
             </div>
         </div>
 
+        @include('partials.per-page', ['paginator' => $employees, 'defaultPerPage' => 25])
+
         <form onsubmit="saveAttendance(event)">
             @csrf
             <input type="hidden" name="attendance_date" value="{{ $date }}">
@@ -100,7 +102,9 @@
             </div>
         </form>
 
-        <div class="mt-3">{{ $employees->links() }}</div>
+        @if ($employees->hasPages())
+            <div class="mt-3">{{ $employees->links() }}</div>
+        @endif
     </div>
 
     <script>
