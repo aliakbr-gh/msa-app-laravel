@@ -41,7 +41,7 @@
                                         Update
                                     </a>
 
-                                    <button onclick="deleteRole({{ $role->id }})" class="btn btn-sm btn-danger">
+                                    <button onclick="confirmDelete('/roles/{{ $role->id }}', '/roles', 'Delete this role?')" class="btn btn-sm btn-danger">
                                         Delete
                                     </button>
                                 @else
@@ -66,33 +66,4 @@
         @endif
 
     </div>
-
-    <script>
-        function deleteRole(id) {
-            $.ajax({
-                url: `/roles/${id}`,
-                method: "DELETE",
-
-                beforeSend: function() {
-                    showLoader();
-                },
-
-                success: function(response) {
-                    console.log(response);
-                    showToast(response?.message);
-                    redirect("/roles");
-                },
-
-                error: function(error) {
-                    console.log(error?.responseJSON);
-                    showToast(error?.responseJSON?.message, 'error');
-                },
-
-                complete: function() {
-                    hideLoader();
-                }
-            });
-        }
-    </script>
-
 @endsection

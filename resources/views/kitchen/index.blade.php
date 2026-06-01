@@ -34,7 +34,7 @@
                             <td>{{ $record->updated_at->format('d-m-Y') }}</td>
                             <td>
                                 <a href="/kitchen/{{ $record->id }}/edit" class="btn btn-sm btn-primary">Update</a>
-                                <button onclick="deleteKitchenRecord({{ $record->id }})" class="btn btn-sm btn-danger">Delete</button>
+                                <button onclick="confirmDelete('/kitchen/{{ $record->id }}', '/kitchen', 'Delete this kitchen record?')" class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     @empty
@@ -48,23 +48,4 @@
             {{ $records->links() }}
         @endif
     </div>
-
-    <script>
-        function deleteKitchenRecord(id) {
-            if (!confirm('Delete this kitchen record?')) return;
-            $.ajax({
-                url: `/kitchen/${id}`,
-                method: 'DELETE',
-                beforeSend: showLoader,
-                success: function(response) {
-                    showToast(response?.message);
-                    redirect('/kitchen');
-                },
-                error: function(error) {
-                    showToast(error?.responseJSON?.message, 'error');
-                },
-                complete: hideLoader
-            });
-        }
-    </script>
 @endsection

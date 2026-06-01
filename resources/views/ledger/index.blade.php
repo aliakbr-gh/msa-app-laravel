@@ -48,7 +48,7 @@
                             <td>{{ $entry->updated_at->format('d-m-Y') }}</td>
                             <td>
                                 <a href="/{{ $module }}/{{ $entry->id }}/edit" class="btn btn-sm btn-primary">Update</a>
-                                <button onclick="deleteEntry({{ $entry->id }})" class="btn btn-sm btn-danger">Delete</button>
+                                <button onclick="confirmDelete('/{{ $module }}/{{ $entry->id }}', '/{{ $module }}', 'Delete this record?')" class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     @empty
@@ -62,23 +62,4 @@
             {{ $entries->links() }}
         @endif
     </div>
-
-    <script>
-        function deleteEntry(id) {
-            if (!confirm('Delete this record?')) return;
-            $.ajax({
-                url: `/{{ $module }}/${id}`,
-                method: 'DELETE',
-                beforeSend: showLoader,
-                success: function(response) {
-                    showToast(response?.message);
-                    redirect('/{{ $module }}');
-                },
-                error: function(error) {
-                    showToast(error?.responseJSON?.message, 'error');
-                },
-                complete: hideLoader
-            });
-        }
-    </script>
 @endsection

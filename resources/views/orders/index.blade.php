@@ -43,7 +43,7 @@
                             <td>
                                 <a href="/orders/{{ $order->id }}/invoice" class="btn btn-sm btn-success">Invoice</a>
                                 <a href="/orders/{{ $order->id }}/edit" class="btn btn-sm btn-primary">Update</a>
-                                <button onclick="deleteOrder({{ $order->id }})" class="btn btn-sm btn-danger">Delete</button>
+                                <button onclick="confirmDelete('/orders/{{ $order->id }}', '/orders', 'Delete this order?')" class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     @empty
@@ -57,23 +57,4 @@
             {{ $orders->links() }}
         @endif
     </div>
-
-    <script>
-        function deleteOrder(id) {
-            if (!confirm('Delete this order?')) return;
-            $.ajax({
-                url: `/orders/${id}`,
-                method: 'DELETE',
-                beforeSend: showLoader,
-                success: function(response) {
-                    showToast(response?.message);
-                    redirect('/orders');
-                },
-                error: function(error) {
-                    showToast(error?.responseJSON?.message, 'error');
-                },
-                complete: hideLoader
-            });
-        }
-    </script>
 @endsection

@@ -45,7 +45,7 @@
                             <td>{{ $employee->updated_at->format('d-m-Y') }}</td>
                             <td>
                                 <a href="/employees/{{ $employee->id }}/edit" class="btn btn-sm btn-primary">Update</a>
-                                <button onclick="deleteEmployee({{ $employee->id }})" class="btn btn-sm btn-danger">Delete</button>
+                                <button onclick="confirmDelete('/employees/{{ $employee->id }}', '/employees', 'Delete this employee?')" class="btn btn-sm btn-danger">Delete</button>
                             </td>
                         </tr>
                     @empty
@@ -61,23 +61,4 @@
             {{ $employees->links() }}
         @endif
     </div>
-
-    <script>
-        function deleteEmployee(id) {
-            if (!confirm('Delete this employee?')) return;
-            $.ajax({
-                url: `/employees/${id}`,
-                method: 'DELETE',
-                beforeSend: showLoader,
-                success: function(response) {
-                    showToast(response?.message);
-                    redirect('/employees');
-                },
-                error: function(error) {
-                    showToast(error?.responseJSON?.message, 'error');
-                },
-                complete: hideLoader
-            });
-        }
-    </script>
 @endsection

@@ -59,7 +59,7 @@
                                 </a>
 
 
-                                <button onclick="deleteUser({{ $user->id }})" class="btn btn-sm btn-danger">
+                                <button onclick="confirmDelete('/users/{{ $user->id }}', '/users', 'Delete this user?')" class="btn btn-sm btn-danger">
                                     Delete
                                 </button>
                             </td>
@@ -79,33 +79,4 @@
         @endif
 
     </div>
-
-    <script>
-        function deleteUser(id) {
-            $.ajax({
-                url: `/users/${id}`,
-                method: "DELETE",
-
-                beforeSend: function() {
-                    showLoader();
-                },
-
-                success: function(response) {
-                    console.log(response);
-                    showToast(response?.message);
-                    redirect("/users");
-                },
-
-                error: function(error) {
-                    console.log(error?.responseJSON);
-                    showToast(error?.responseJSON?.message, 'error');
-                },
-
-                complete: function() {
-                    hideLoader();
-                }
-            });
-        }
-    </script>
-
 @endsection

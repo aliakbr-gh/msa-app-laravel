@@ -118,7 +118,7 @@ class EmployeeController extends Controller
         return APIResponse::success('Attendance saved successfully');
     }
 
-    public function salaries()
+    public function salaries(Request $request)
     {
         $payments = EmployeeSalaryPayment::with('employee')->latest('paid_on')->paginate($this->perPage($request))->withQueryString();
         $employees = Employee::orderBy('full_name')->get();

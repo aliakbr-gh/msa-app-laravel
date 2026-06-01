@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\KitchenRecordController;
 use App\Http\Controllers\LedgerController;
@@ -28,7 +29,7 @@ Route::middleware('role:superadmin')->prefix('roles')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', fn () => view('dashboard.dashboard'));
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
     Route::middleware('role:superadmin')->prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'getAllUsers']);
