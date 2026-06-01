@@ -22,7 +22,8 @@ class LedgerController extends Controller
         $entries = LedgerEntry::where('module', $module)
             ->orderByDesc('entry_date')
             ->orderByDesc('id')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return response()->view('ledger.index', compact('entries', 'module', 'config'));
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\KitchenRecordController;
 use App\Http\Controllers\LedgerController;
@@ -53,6 +54,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [EmployeeController::class, 'store']);
             Route::get('/attendance', [EmployeeController::class, 'attendance']);
             Route::post('/attendance', [EmployeeController::class, 'markAttendance']);
+            Route::get('/attendance-report', [EmployeeController::class, 'attendanceReport']);
             Route::get('/salaries', [EmployeeController::class, 'salaries']);
             Route::post('/salaries', [EmployeeController::class, 'storeSalaryPayment']);
             Route::get('/report', [EmployeeController::class, 'report']);
@@ -88,6 +90,8 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{record}', [KitchenRecordController::class, 'update']);
             Route::delete('/{record}', [KitchenRecordController::class, 'destroy']);
         });
+
+        Route::get('/backup/download', [BackupController::class, 'download']);
     });
 
     Route::get('/profile', [AuthController::class, 'profile'])->name('ali');

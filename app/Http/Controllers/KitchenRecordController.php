@@ -10,7 +10,7 @@ class KitchenRecordController extends Controller
 {
     public function index()
     {
-        $records = KitchenRecord::latest()->paginate(10);
+        $records = KitchenRecord::latest()->paginate(10)->withQueryString();
 
         return response()->view('kitchen.index', compact('records'));
     }

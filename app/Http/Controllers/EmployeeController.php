@@ -15,7 +15,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::latest()->paginate(10);
+        $employees = Employee::latest()->paginate(10)->withQueryString();
 
         return response()->view('employees.index', compact('employees'));
     }
@@ -84,11 +84,17 @@ class EmployeeController extends Controller
     public function attendance(Request $request)
     {
         $date = $request->query('date', now()->toDateString());
-        $employees = Employee::orderBy('full_name')->paginate(20);
+        $employees = Employee::orderBy('full_name')->paginate(15)->withQueryString();
         $attendances = EmployeeAttendance::whereDate('attendance_date', $date)
             ->pluck('status', 'employee_id');
+        $summary = [
+            'total' => Employee::count(),
+            'present' => EmployeeAttendance::whereDate('attendance_date', $date)->where('status', 'present')->count(),
+            'absent' => EmployeeAttendance::whereDate('attendance_date', $date)->where('status', 'absent')->count(),
+            'marked' => EmployeeAttendance::whereDate('attendance_date', $date)->count(),
+        ];
 
-        return response()->view('employee_attendance.index', compact('employees', 'attendances', 'date'));
+        return response()->view('employee_attendance.index', compact('employees', 'attendances', 'date', 'summary'));
     }
 
     public function markAttendance(Request $request)
@@ -114,7 +120,7 @@ class EmployeeController extends Controller
 
     public function salaries()
     {
-        $payments = EmployeeSalaryPayment::with('employee')->latest('paid_on')->paginate(10);
+        $payments = EmployeeSalaryPayment::with('employee')->latest('paid_on')->paginate(10)->withQueryString();
         $employees = Employee::orderBy('full_name')->get();
 
         return response()->view('employee_salaries.index', compact('payments', 'employees'));
@@ -141,8 +147,26 @@ class EmployeeController extends Controller
         $employees = Employee::with([
             'attendances' => fn ($query) => $query->whereBetween('attendance_date', [$startDate, $endDate]),
             'salaryPayments' => fn ($query) => $query->whereBetween('paid_on', [$startDate, $endDate]),
-        ])->orderBy('full_name')->paginate(10);
+        ])->orderBy('full_name')->paginate(10)->withQueryString();
 
         return response()->view('employee_salaries.report', compact('employees', 'month'));
+    }
+
+    public function attendanceReport(Request $request)
+    {
+        $month = $request->query('month', now()->format('Y-m'));
+        $startDate = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        $endDate = $startDate->copy()->endOfMonth();
+        $days = collect();
+
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            $days->push($date->copy());
+        }
+
+        $employees = Employee::with([
+            'attendances' => fn ($query) => $query->whereBetween('attendance_date', [$startDate, $endDate]),
+        ])->orderBy('full_name')->paginate(8)->withQueryString();
+
+        return response()->view('employee_attendance.report', compact('employees', 'days', 'month'));
     }
 }

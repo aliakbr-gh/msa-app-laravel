@@ -10,7 +10,7 @@ class RoleController extends Controller
 {
     public function getAllRoles(Request $request)
     {
-        $roles = Role::latest()->get();
+        $roles = Role::latest()->paginate(10);
 
         return response()->view('roles.roles', compact('roles'));
     }

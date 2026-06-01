@@ -14,7 +14,7 @@ class UserController extends Controller
     public function getAllUsers(Request $request)
     {
         // $users = \DB::table('users')->get();
-        $users = User::with('role')->get();
+        $users = User::with('role')->latest()->paginate(10);
 
         return response()->view('users.users', compact('users'));
     }

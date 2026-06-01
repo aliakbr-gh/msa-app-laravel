@@ -24,7 +24,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($roles as $role)
+                    @forelse ($roles as $role)
                         <tr>
                             <td>{{ $role->id }}</td>
                             <td>{{ $role->name }}</td>
@@ -50,11 +50,17 @@
                                 @endif
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="5">No roles found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
 
             </table>
         </div>
+
+        {{ $roles->links() }}
 
     </div>
 

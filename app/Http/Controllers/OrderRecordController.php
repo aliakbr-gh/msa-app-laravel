@@ -11,7 +11,7 @@ class OrderRecordController extends Controller
 {
     public function index()
     {
-        $orders = OrderRecord::latest('order_date')->latest('id')->paginate(10);
+        $orders = OrderRecord::latest('order_date')->latest('id')->paginate(10)->withQueryString();
 
         return response()->view('orders.index', compact('orders'));
     }

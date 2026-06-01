@@ -28,7 +28,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($users as $user)
+                    @forelse ($users as $user)
                         <tr>
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->username }}</td>
@@ -63,11 +63,17 @@
                                 </button>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="9">No users found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
 
             </table>
         </div>
+
+        {{ $users->links() }}
 
     </div>
 

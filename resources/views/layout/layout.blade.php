@@ -74,6 +74,7 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/employees">Employees</a></li>
                                 <li><a class="dropdown-item" href="/employees/attendance">Attendance</a></li>
+                                <li><a class="dropdown-item" href="/employees/attendance-report">Attendance Report</a></li>
                                 <li><a class="dropdown-item" href="/employees/salaries">Salary Payments</a></li>
                                 <li><a class="dropdown-item" href="/employees/report">Monthly Report</a></li>
                             </ul>
@@ -84,6 +85,7 @@
                         <li class="nav-item"><a class="nav-link {{ request()->is('chicken-2*') ? 'active' : '' }}" href="/chicken-2">Chicken 2</a></li>
                         <li class="nav-item"><a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">Orders</a></li>
                         <li class="nav-item"><a class="nav-link {{ request()->is('kitchen*') ? 'active' : '' }}" href="/kitchen">Kitchen</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/backup/download">Backup</a></li>
                     @endauth
 
                     @guest
