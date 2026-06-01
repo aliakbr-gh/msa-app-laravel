@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120" role="img" aria-label="MSA Foods">
+  <rect width="360" height="120" rx="10" fill="#111827"/>
+  <circle cx="64" cy="60" r="34" fill="#f59e0b"/>
+  <path d="M48 74c18-2 32-16 36-34 8 20-4 42-26 46-4-3-7-7-10-12z" fill="#fff7ed"/>
+  <text x="116" y="55" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">MSA</text>
+  <text x="116" y="86" fill="#fbbf24" font-family="Arial, sans-serif" font-size="24" font-weight="600">Foods</text>
+</svg>

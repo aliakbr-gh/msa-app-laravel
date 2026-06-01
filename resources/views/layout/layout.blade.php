@@ -67,41 +67,23 @@
                                 Users
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/employees">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ request()->is('employees*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
                                 Employees
                             </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/employees">Employees</a></li>
+                                <li><a class="dropdown-item" href="/employees/attendance">Attendance</a></li>
+                                <li><a class="dropdown-item" href="/employees/salaries">Salary Payments</a></li>
+                                <li><a class="dropdown-item" href="/employees/report">Monthly Report</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/employees">
-                                Employees Attendance
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/chicken-1">
-                                Chicken 1
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/chicken-2">
-                                Chicken 2
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/beef">
-                                Beef
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/roti">
-                                Roti
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/reports">
-                                Reports
-                            </a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('roti*') ? 'active' : '' }}" href="/roti">Roti</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('beef*') ? 'active' : '' }}" href="/beef">Beef</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('chicken-1*') ? 'active' : '' }}" href="/chicken-1">Chicken 1</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('chicken-2*') ? 'active' : '' }}" href="/chicken-2">Chicken 2</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">Orders</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('kitchen*') ? 'active' : '' }}" href="/kitchen">Kitchen</a></li>
                     @endauth
 
                     @guest
