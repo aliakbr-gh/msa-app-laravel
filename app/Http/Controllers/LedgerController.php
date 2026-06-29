@@ -4,22 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Helpers\APIResponse;
 use App\Models\LedgerEntry;
+use App\Models\LedgerModule;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class LedgerController extends Controller
 {
-    private array $modules = [
-        'roti' => ['title' => 'Roti', 'has_qty' => false, 'qty_label' => null, 'rate_label' => null],
-        'beef' => ['title' => 'Beef', 'has_qty' => true, 'qty_label' => 'Qty (Kg)', 'rate_label' => 'Beef Rate'],
-        'chicken-1' => ['title' => 'Chicken 1', 'has_qty' => true, 'qty_label' => 'Weight (Kg)', 'rate_label' => 'Farm Rate'],
-        'chicken-2' => ['title' => 'Chicken 2', 'has_qty' => true, 'qty_label' => 'Weight (Kg)', 'rate_label' => 'Farm Rate'],
-    ];
-
     public function index(Request $request, string $module)
     {
         $config = $this->config($module);
-        $entries = LedgerEntry::where('module', $module)
+        $entries = $this->applyDateRange(LedgerEntry::where('module', $module), $request, 'entry_date')
             ->orderByDesc('entry_date')
             ->orderByDesc('id')
             ->paginate($this->perPage($request))
@@ -46,6 +39,27 @@ class LedgerController extends Controller
         $this->recalculateBalances($module);
 
         return APIResponse::success('Record created successfully', $entry->fresh(), 201);
+    }
+
+    public function pay(Request $request, string $module)
+    {
+        $this->config($module);
+        $lastEntry = LedgerEntry::where('module', $module)->latest('id')->first();
+        $data = $request->validate([
+            'entry_date' => 'required|date',
+            'amount' => 'required|numeric|min:0.01',
+        ]);
+
+        $entry = LedgerEntry::create([
+            'module' => $module,
+            'entry_date' => $data['entry_date'],
+            'description' => 'Paid',
+            'amount' => $data['amount'],
+            'opening_balance' => $lastEntry ? null : 0,
+        ]);
+        $this->recalculateBalances($module);
+
+        return APIResponse::success('Payment recorded successfully', $entry->fresh(), 201);
     }
 
     public function edit(string $module, LedgerEntry $entry)
@@ -86,7 +100,7 @@ class LedgerController extends Controller
             'opening_balance' => 'nullable|numeric|min:0',
         ];
 
-        if ($this->modules[$module]['has_qty']) {
+        if ($this->config($module)['has_qty']) {
             $rules['qty'] = 'required|numeric|min:0';
             $rules['rate'] = 'required|numeric|min:0';
         }
@@ -117,9 +131,15 @@ class LedgerController extends Controller
 
     private function config(string $module): array
     {
-        abort_unless(array_key_exists($module, $this->modules), 404);
+        $ledgerModule = LedgerModule::where('slug', $module)->where('is_active', true)->first();
+        abort_unless($ledgerModule, 404);
 
-        return $this->modules[$module];
+        return [
+            'title' => $ledgerModule->title,
+            'has_qty' => $ledgerModule->has_qty,
+            'qty_label' => $ledgerModule->qty_label,
+            'rate_label' => $ledgerModule->rate_label,
+        ];
     }
 
     private function ensureModuleEntry(string $module, LedgerEntry $entry): void

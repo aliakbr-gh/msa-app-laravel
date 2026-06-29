@@ -4,6 +4,7 @@
 @section('page-title', 'Employee Attendance')
 
 @section('content')
+    @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
             <form method="GET" class="row g-2">
@@ -53,11 +54,13 @@
             @csrf
             <input type="hidden" name="attendance_date" value="{{ $date }}">
 
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <button type="button" class="btn btn-sm btn-success" onclick="markAll('present')">Mark Page Present</button>
-                <button type="button" class="btn btn-sm btn-danger" onclick="markAll('absent')">Mark Page Absent</button>
-                <button type="submit" class="btn btn-sm btn-primary">Save Attendance</button>
-            </div>
+            @if (in_array($role, ['superadmin', 'admin']))
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <button type="button" class="btn btn-sm btn-success" onclick="markAll('present')">Mark Page Present</button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="markAll('absent')">Mark Page Absent</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save Attendance</button>
+                </div>
+            @endif
 
             <div class="table-responsive">
                 <table class="table table-striped table-bordered align-middle text-center">
@@ -79,7 +82,7 @@
                                 </td>
                                 <td>{{ number_format($employee->salary, 2) }}</td>
                                 <td>
-                                    <select name="attendance[{{ $employee->id }}]" class="form-select attendance-status {{ $status === 'absent' ? 'border-danger' : 'border-success' }}">
+                                    <select name="attendance[{{ $employee->id }}]" class="form-select attendance-status {{ $status === 'absent' ? 'border-danger' : 'border-success' }}" {{ in_array($role, ['superadmin', 'admin']) ? '' : 'disabled' }}>
                                         <option value="present" {{ ($status ?? 'present') === 'present' ? 'selected' : '' }}>Present</option>
                                         <option value="absent" {{ $status === 'absent' ? 'selected' : '' }}>Absent</option>
                                     </select>
@@ -107,6 +110,7 @@
         @endif
     </div>
 
+    @if (in_array($role, ['superadmin', 'admin']))
     <script>
         function markAll(status) {
             $('.attendance-status').val(status).trigger('change');
@@ -135,4 +139,5 @@
             });
         }
     </script>
+    @endif
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\APIResponse;
 use App\Models\Employee;
 use App\Models\EmployeeAttendance;
+use App\Models\EmployeeSalaryHistory;
 use App\Models\EmployeeSalaryPayment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,7 +16,9 @@ class EmployeeController extends Controller
 {
     public function index(Request $request)
     {
-        $employees = Employee::latest()->paginate($this->perPage($request))->withQueryString();
+        $employees = $this->applyDateRange(Employee::latest(), $request)
+            ->paginate($this->perPage($request))
+            ->withQueryString();
 
         return response()->view('employees.index', compact('employees'));
     }
@@ -39,6 +42,10 @@ class EmployeeController extends Controller
         }
 
         $employee = Employee::create($data);
+        $employee->salaryHistories()->create([
+            'salary' => $employee->salary,
+            'effective_from' => now()->toDateString(),
+        ]);
 
         return APIResponse::success('Employee created successfully', $employee, 201);
     }
@@ -65,7 +72,15 @@ class EmployeeController extends Controller
             $data['picture'] = $request->file('picture')->store('employees', 'public');
         }
 
+        $salaryChanged = (float) $employee->salary !== (float) $data['salary'];
         $employee->update($data);
+
+        if ($salaryChanged) {
+            $employee->salaryHistories()->create([
+                'salary' => $employee->salary,
+                'effective_from' => now()->toDateString(),
+            ]);
+        }
 
         return APIResponse::success('Employee updated successfully', $employee);
     }
@@ -120,7 +135,9 @@ class EmployeeController extends Controller
 
     public function salaries(Request $request)
     {
-        $payments = EmployeeSalaryPayment::with('employee')->latest('paid_on')->paginate($this->perPage($request))->withQueryString();
+        $payments = $this->applyDateRange(EmployeeSalaryPayment::with('employee')->latest('paid_on'), $request, 'paid_on')
+            ->paginate($this->perPage($request))
+            ->withQueryString();
         $employees = Employee::orderBy('full_name')->get();
 
         return response()->view('employee_salaries.index', compact('payments', 'employees'));
@@ -147,9 +164,30 @@ class EmployeeController extends Controller
         $employees = Employee::with([
             'attendances' => fn ($query) => $query->whereBetween('attendance_date', [$startDate, $endDate]),
             'salaryPayments' => fn ($query) => $query->whereBetween('paid_on', [$startDate, $endDate]),
+            'salaryHistories' => fn ($query) => $query->where('effective_from', '<=', $endDate)->latest('effective_from'),
         ])->orderBy('full_name')->paginate($this->perPage($request))->withQueryString();
 
         return response()->view('employee_salaries.report', compact('employees', 'month'));
+    }
+
+    public function salarySlip(Request $request, Employee $employee)
+    {
+        $month = $request->query('month', now()->format('Y-m'));
+        $startDate = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        $endDate = $startDate->copy()->endOfMonth();
+        $employee->load([
+            'attendances' => fn ($query) => $query->whereBetween('attendance_date', [$startDate, $endDate]),
+            'salaryPayments' => fn ($query) => $query->whereBetween('paid_on', [$startDate, $endDate]),
+            'salaryHistories' => fn ($query) => $query->where('effective_from', '<=', $endDate)->latest('effective_from'),
+        ]);
+        $salary = (float) ($employee->salaryHistories->first()?->salary ?? $employee->salary);
+        $absent = $employee->attendances->where('status', 'absent')->count();
+        $deduction = ($salary / max(1, $endDate->daysInMonth)) * $absent;
+        $netSalary = max(0, $salary - $deduction);
+        $paid = (float) $employee->salaryPayments->sum('amount');
+        $balance = max(0, $netSalary - $paid);
+
+        return response()->view('employee_salaries.slip', compact('employee', 'month', 'salary', 'absent', 'deduction', 'netSalary', 'paid', 'balance'));
     }
 
     public function attendanceReport(Request $request)

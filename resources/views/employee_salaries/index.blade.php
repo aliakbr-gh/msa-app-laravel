@@ -4,7 +4,9 @@
 @section('page-title', 'Salary Payments')
 
 @section('content')
+    @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
+        @if (in_array($role, ['superadmin', 'admin']))
         <form onsubmit="saveSalaryPayment(event)" class="row g-2 align-items-end mb-4">
             @csrf
             <div class="col-md-3">
@@ -31,6 +33,14 @@
             <div class="col-md-2">
                 <button class="btn btn-success w-100">Add Payment</button>
             </div>
+        </form>
+        @endif
+
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-md-3"><input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control"></div>
+            <div class="col-md-3"><input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control"></div>
+            <div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div>
+            <div class="col-md-2"><a href="/employees/salaries" class="btn btn-outline-secondary w-100">Reset</a></div>
         </form>
 
         @include('partials.per-page', ['paginator' => $payments])
@@ -67,6 +77,7 @@
         @endif
     </div>
 
+    @if (in_array($role, ['superadmin', 'admin']))
     <script>
         function saveSalaryPayment(e) {
             e.preventDefault();
@@ -86,4 +97,5 @@
             });
         }
     </script>
+    @endif
 @endsection

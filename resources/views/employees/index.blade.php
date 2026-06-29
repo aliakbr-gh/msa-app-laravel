@@ -4,13 +4,22 @@
 @section('page-title', 'Employees')
 
 @section('content')
+    @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="d-flex flex-wrap gap-2 mb-3">
-            <a href="/employees/create" class="btn btn-primary">Create Employee</a>
+            @if (in_array($role, ['superadmin', 'admin']))
+                <a href="/employees/create" class="btn btn-primary">Create Employee</a>
+            @endif
             <a href="/employees/attendance" class="btn btn-outline-primary">Mark Attendance</a>
             <a href="/employees/salaries" class="btn btn-outline-success">Salary Payments</a>
             <a href="/employees/report" class="btn btn-outline-dark">Monthly Report</a>
         </div>
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-md-3"><input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control"></div>
+            <div class="col-md-3"><input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control"></div>
+            <div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div>
+            <div class="col-md-2"><a href="/employees" class="btn btn-outline-secondary w-100">Reset</a></div>
+        </form>
         @include('partials.per-page', ['paginator' => $employees])
 
         <div class="table-responsive">
@@ -44,8 +53,12 @@
                             <td>{{ $employee->created_at->format('d-m-Y') }}</td>
                             <td>{{ $employee->updated_at->format('d-m-Y') }}</td>
                             <td>
-                                <a href="/employees/{{ $employee->id }}/edit" class="btn btn-sm btn-primary">Update</a>
-                                <button onclick="confirmDelete('/employees/{{ $employee->id }}', '/employees', 'Delete this employee?')" class="btn btn-sm btn-danger">Delete</button>
+                                @if ($role === 'superadmin')
+                                    <a href="/employees/{{ $employee->id }}/edit" class="btn btn-sm btn-primary">Update</a>
+                                    <button onclick="confirmDelete('/employees/{{ $employee->id }}', '/employees', 'Delete this employee?')" class="btn btn-sm btn-danger">Delete</button>
+                                @else
+                                    <span class="text-muted">Read only</span>
+                                @endif
                             </td>
                         </tr>
                     @empty

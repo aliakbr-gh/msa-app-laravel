@@ -13,7 +13,7 @@ class BackupController extends Controller
         $backupDirectory = storage_path('app/backups');
         File::ensureDirectoryExists($backupDirectory);
 
-        $fileName = 'msa-app-backup-'.now('Asia/Karachi')->format('d-m-Y-h-i-A').'.zip';
+        $fileName = 'restaurant-erp-backup-'.now('Asia/Karachi')->format('d-m-Y-h-i-A').'.zip';
         $zipPath = $backupDirectory.'/'.$fileName;
 
         $zip = new ZipArchive();
@@ -61,7 +61,7 @@ class BackupController extends Controller
             ->map(fn ($table) => array_values((array) $table)[0])
             ->values();
 
-        $dump = "-- MSA backup generated at ".now()->toDateTimeString()."\n\n";
+        $dump = "-- Restaurant ERP backup generated at ".now()->toDateTimeString()."\n\n";
         $dump .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
 
         foreach ($tables as $table) {

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>MSA - @yield('title', 'MSA')</title>
+    <title>Restaurant ERP - @yield('title', 'Restaurant ERP')</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,7 +40,7 @@
         <div class="container">
 
             <!-- Brand -->
-            <a class="navbar-brand fw-bold" href="/dashboard">MSA</a>
+            <a class="navbar-brand fw-bold" href="/dashboard">Restaurant ERP</a>
 
             <!-- Mobile Toggle -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -57,16 +57,14 @@
                                 Dashboard
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/roles">
-                                Roles
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users">
-                                Users
-                            </a>
-                        </li>
+                        @php($currentRole = auth()->user()->role?->name)
+                        @if (in_array($currentRole, ['superadmin', 'admin', 'cashier']))
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users">
+                                    Users
+                                </a>
+                            </li>
+                        @endif
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {{ request()->is('employees*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
                                 Employees
@@ -79,14 +77,16 @@
                                 <li><a class="dropdown-item" href="/employees/report">Monthly Report</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('roti*') ? 'active' : '' }}" href="/roti">Roti</a></li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('beef*') ? 'active' : '' }}" href="/beef">Beef</a></li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('chicken-1*') ? 'active' : '' }}" href="/chicken-1">Chicken 1</a></li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('chicken-2*') ? 'active' : '' }}" href="/chicken-2">Chicken 2</a></li>
+                        <li class="nav-item"><a class="nav-link {{ request()->is('modules*') ? 'active' : '' }}" href="/modules">Modules</a></li>
+                        @foreach (($ledgerModules ?? collect()) as $ledgerModule)
+                            <li class="nav-item"><a class="nav-link {{ request()->is($ledgerModule->slug . '*') ? 'active' : '' }}" href="/{{ $ledgerModule->slug }}">{{ $ledgerModule->title }}</a></li>
+                        @endforeach
                         <li class="nav-item"><a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">Orders</a></li>
                         <li class="nav-item"><a class="nav-link {{ request()->is('kitchen*') ? 'active' : '' }}" href="/kitchen">Kitchen</a></li>
                         <li class="nav-item"><a class="nav-link {{ request()->is('reports*') ? 'active' : '' }}" href="/reports">Reports</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/backup/download">Backup</a></li>
+                        @if ($currentRole === 'superadmin')
+                            <li class="nav-item"><a class="nav-link" href="/backup/download">Backup</a></li>
+                        @endif
                     @endauth
 
                     @guest

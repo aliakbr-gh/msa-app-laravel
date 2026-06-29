@@ -22,9 +22,9 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        $userRole = $user->role->name;
+        $userRole = $user->role?->name;
 
-        if (!in_array($userRole, $roles)) {
+        if (!$userRole || !in_array($userRole, $roles)) {
             abort(403, 'Unauthorized access');
         }
         return $next($request);

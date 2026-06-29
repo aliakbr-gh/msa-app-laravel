@@ -13,18 +13,17 @@ class UserController extends Controller
 {
     public function getAllUsers(Request $request)
     {
-        // $users = \DB::table('users')->get();
-        $users = User::with('role')->latest()->paginate($this->perPage($request))->withQueryString();
+        $users = $this->applyDateRange(User::with('role')->latest(), $request)
+            ->paginate($this->perPage($request))
+            ->withQueryString();
 
         return response()->view('users.users', compact('users'));
     }
 
     public function editUser(Request $request, $id)
     {
-        // $user = User::find($id);
-        $user = \DB::table('users')->where('id', $id)->first();
-
-        $roles = Role::latest()->get();
+        $user = User::find($id);
+        $roles = Role::fixed();
 
         if (! $user) {
             abort(404);
@@ -35,15 +34,23 @@ class UserController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-        $toLogout = ($request->user()->id === (int) $id) && ($request->password);
-
-        $updatedUser = User::where('id', $id)->update([
-            'username' => $request->username,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-            'role_id' => (int) $request->role_id,
-            'is_active' => (int) $request->is_active,
+        $user = User::findOrFail($id);
+        $data = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'phone' => 'nullable|string|max:30',
+            'password' => 'nullable|min:4',
+            'role_id' => 'required|exists:roles,id',
+            'is_active' => 'required|boolean',
         ]);
+
+        $toLogout = ($request->user()->id === (int) $id) && filled($data['password'] ?? null);
+        if (filled($data['password'] ?? null)) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
 
         if ($toLogout) {
             Auth::logout();
@@ -53,12 +60,13 @@ class UserController extends Controller
             return APIResponse::success('Password chanegd, Logging out...');
         }
 
-        return APIResponse::success('User updated successfully', $updatedUser);
+        return APIResponse::success('User updated successfully', $user->fresh());
     }
 
     public function deleteUser(Request $request, $id)
     {
-        $deletedUser = User::find($id);
+        abort_if((int) $request->user()->id === (int) $id, 422, 'You cannot delete your own user.');
+        $deletedUser = User::findOrFail($id);
 
         $response = $deletedUser->delete();
 
@@ -67,7 +75,7 @@ class UserController extends Controller
 
     public function createUsersView()
     {
-        $roles = Role::latest()->get();
+        $roles = Role::fixed();
 
         return response()->view('users.create', compact('roles'));
     }

@@ -33,4 +33,9 @@ class OrderRecord extends Model
             'pending_payment' => 'decimal:2',
         ];
     }
+
+    public function payments()
+    {
+        return $this->hasMany(OrderPayment::class);
+    }
 }

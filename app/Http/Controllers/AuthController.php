@@ -6,6 +6,7 @@ use App\Helpers\APIResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -46,8 +47,24 @@ class AuthController extends Controller
             'created_at',
         ]);
 
-        $user = User::with('roles')->where('id', Auth::user()->id)->first();
+        $user = User::with('role')->where('id', Auth::user()->id)->first();
 
         return response()->view('profile.profile', compact('profile', 'user'));
+    }
+
+    public function changePassword(Request $request)
+    {
+        $data = $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:4|confirmed',
+        ]);
+
+        abort_unless(Hash::check($data['current_password'], $request->user()->password), 422, 'Current password is incorrect.');
+
+        $request->user()->update([
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return APIResponse::success('Password changed successfully');
     }
 }

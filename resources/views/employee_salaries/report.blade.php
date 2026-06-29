@@ -24,8 +24,11 @@
                         <th>Monthly Salary</th>
                         <th>Present Days</th>
                         <th>Absent Days</th>
+                        <th>Off Deduction</th>
+                        <th>Net Salary</th>
                         <th>Paid Amount</th>
                         <th>Unpaid Amount</th>
+                        <th>Slip</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,16 +36,23 @@
                         @php
                             $present = $employee->attendances->where('status', 'present')->count();
                             $absent = $employee->attendances->where('status', 'absent')->count();
+                            $salary = (float) ($employee->salaryHistories->first()?->salary ?? $employee->salary);
+                            $daysInMonth = \Carbon\Carbon::createFromFormat('Y-m', $month)->daysInMonth;
+                            $deduction = ($salary / max(1, $daysInMonth)) * $absent;
+                            $netSalary = max(0, $salary - $deduction);
                             $paid = $employee->salaryPayments->sum('amount');
-                            $unpaid = max(0, (float) $employee->salary - (float) $paid);
+                            $unpaid = max(0, $netSalary - (float) $paid);
                         @endphp
                         <tr>
                             <td>{{ $employee->full_name }}</td>
-                            <td>{{ number_format($employee->salary, 2) }}</td>
+                            <td>{{ number_format($salary, 2) }}</td>
                             <td><span class="badge bg-success">{{ $present }}</span></td>
                             <td><span class="badge bg-danger">{{ $absent }}</span></td>
+                            <td>{{ number_format($deduction, 2) }}</td>
+                            <td>{{ number_format($netSalary, 2) }}</td>
                             <td>{{ number_format($paid, 2) }}</td>
                             <td>{{ number_format($unpaid, 2) }}</td>
+                            <td><a class="btn btn-sm btn-outline-primary" href="/employees/{{ $employee->id }}/salary-slip?month={{ $month }}">Slip</a></td>
                         </tr>
                     @endforeach
                 </tbody>

@@ -4,15 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Helpers\APIResponse;
 use App\Models\KitchenRecord;
+use App\Models\OrderRecord;
 use Illuminate\Http\Request;
 
 class KitchenRecordController extends Controller
 {
     public function index(Request $request)
     {
-        $records = KitchenRecord::latest()->paginate($this->perPage($request))->withQueryString();
+        $records = $this->applyDateRange(KitchenRecord::latest(), $request)
+            ->paginate($this->perPage($request))
+            ->withQueryString();
+        $deliveryDate = $request->query('delivery_date', now()->toDateString());
+        $todayOrders = OrderRecord::whereDate('order_delivery_date', $deliveryDate)
+            ->orderBy('order_delivery_date')
+            ->orderBy('book_no')
+            ->get();
 
-        return response()->view('kitchen.index', compact('records'));
+        return response()->view('kitchen.index', compact('records', 'todayOrders', 'deliveryDate'));
     }
 
     public function create()

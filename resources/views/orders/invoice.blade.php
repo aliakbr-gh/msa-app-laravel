@@ -11,20 +11,14 @@
             <a href="/orders" class="btn btn-secondary">Back</a>
         </div>
 
-        <div id="invoiceCard" class="bg-white text-dark border mx-auto p-4" style="max-width: 820px;">
-            <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+        <div id="invoiceCard" class="bg-white text-dark border mx-auto p-4 shadow-sm" style="max-width: 900px;">
+            <div class="d-flex justify-content-between align-items-start border-bottom border-3 pb-3 mb-4">
                 <div>
-                    @if (file_exists(public_path('images/msa-logo.png')))
-                        <img src="{{ asset('images/msa-logo.png') }}" alt="MSA Logo" style="max-height: 80px;">
-                    @elseif (file_exists(public_path('images/msa-logo.svg')))
-                        <img src="{{ asset('images/msa-logo.svg') }}" alt="MSA Logo" style="max-height: 80px;">
-                    @else
-                        <h2 class="fw-bold mb-0">MSA Foods</h2>
-                    @endif
-                    <div class="text-muted">Order Invoice</div>
+                    <h2 class="fw-bold mb-0">Restaurant ERP</h2>
+                    <div class="text-uppercase text-muted small fw-semibold">Order Invoice</div>
                 </div>
                 <div class="text-end">
-                    <h4 class="mb-1">Book No: {{ $order->book_no }}</h4>
+                    <h3 class="mb-1">Book No: {{ $order->book_no }}</h3>
                     <div>Order: {{ $order->order_date->format('d-m-Y') }}</div>
                     <div>Delivery: {{ $order->order_delivery_date?->format('d-m-Y') ?? '-' }}</div>
                 </div>
@@ -56,6 +50,28 @@
                 </tbody>
             </table>
 
+            <h5 class="mt-4">Payment Records</h5>
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Notes</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($order->payments as $payment)
+                        <tr>
+                            <td>{{ $payment->paid_on->format('d-m-Y') }}</td>
+                            <td>{{ $payment->notes ?? '-' }}</td>
+                            <td class="text-end">{{ number_format($payment->amount, 2) }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="3" class="text-center text-muted">No payments recorded.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+
             <div class="row justify-content-end">
                 <div class="col-md-5">
                     <table class="table table-bordered">
@@ -64,7 +80,7 @@
                             <td class="text-end">{{ number_format($order->total_amount, 2) }}</td>
                         </tr>
                         <tr>
-                            <th>Advance Received</th>
+                            <th>Paid Amount</th>
                             <td class="text-end">{{ number_format($order->advance_received, 2) }}</td>
                         </tr>
                         <tr>

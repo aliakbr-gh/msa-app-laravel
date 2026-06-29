@@ -13,4 +13,17 @@ abstract class Controller
 
         return in_array($perPage, $allowed, true) ? $perPage : $default;
     }
+
+    protected function applyDateRange($query, Request $request, string $column = 'created_at')
+    {
+        if ($request->filled('date_from')) {
+            $query->whereDate($column, '>=', $request->query('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate($column, '<=', $request->query('date_to'));
+        }
+
+        return $query;
+    }
 }

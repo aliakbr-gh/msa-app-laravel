@@ -25,7 +25,7 @@
                     <tr>
                         <th class="text-start">Employee</th>
                         @foreach ($days as $day)
-                            <th>{{ $day->format('d') }}</th>
+                            <th class="{{ $day->isWeekend() ? 'table-warning' : '' }}">{{ $day->format('d') }}</th>
                         @endforeach
                         <th>Present</th>
                         <th>Absent</th>
@@ -42,7 +42,7 @@
                             <td class="text-start fw-semibold">{{ $employee->full_name }}</td>
                             @foreach ($days as $day)
                                 @php($attendance = $attendanceByDate->get($day->format('Y-m-d')))
-                                <td>
+                                <td class="{{ $day->isWeekend() ? 'table-warning' : '' }}">
                                     @if (($attendance?->status) === 'present')
                                         <span class="badge bg-success">P</span>
                                     @elseif (($attendance?->status) === 'absent')
