@@ -20,6 +20,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            $this->logActivity('login', 'auth', 'User logged in');
 
             return APIResponse::success('Login successfully', Auth::user());
         }
@@ -32,6 +33,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        $this->logActivity('logout', 'auth', 'User logged out');
 
         return APIResponse::success('Logged out successfully');
     }
@@ -64,6 +66,7 @@ class AuthController extends Controller
         $request->user()->update([
             'password' => Hash::make($data['password']),
         ]);
+        $this->logActivity('update', 'profile', 'Password changed');
 
         return APIResponse::success('Password changed successfully');
     }

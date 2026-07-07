@@ -50,7 +50,7 @@
             <div class="col-md-4">
                 <label class="form-label">Status</label>
                 <select name="status" class="form-select">
-                    @foreach (['pending', 'confirmed', 'delivered', 'cancelled'] as $status)
+                    @foreach (['pending', 'confirmed', 'delivered'] as $status)
                         <option value="{{ $status }}" {{ $order->status === $status ? 'selected' : '' }}>{{ ucfirst($status) }}</option>
                     @endforeach
                 </select>

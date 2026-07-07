@@ -7,6 +7,10 @@
     <form onsubmit="updateKitchenRecord(event, {{ $record->id }})" class="mx-auto" style="max-width: 560px;">
         @csrf
         <div class="mb-3">
+            <label class="form-label">Delivery Date</label>
+            <input type="date" name="delivery_date" value="{{ $record->delivery_date?->format('Y-m-d') }}" class="form-control" required>
+        </div>
+        <div class="mb-3">
             <label class="form-label">Details</label>
             <textarea name="details" class="form-control" rows="4" required>{{ $record->details }}</textarea>
         </div>

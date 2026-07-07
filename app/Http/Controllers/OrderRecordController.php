@@ -14,6 +14,7 @@ class OrderRecordController extends Controller
     public function index(Request $request)
     {
         $orders = $this->applyDateRange(OrderRecord::with('payments')->latest('order_date')->latest('id'), $request, 'order_date')
+            ->when($request->filled('book_no'), fn ($query) => $query->where('book_no', $request->query('book_no')))
             ->paginate($this->perPage($request))
             ->withQueryString();
 
@@ -45,6 +46,7 @@ class OrderRecordController extends Controller
 
             return $this->syncOrderBalance($order);
         });
+        $this->logActivity('create', 'orders', "Created order #{$order->book_no}");
 
         return APIResponse::success('Order created successfully', $order, 201);
     }
@@ -59,6 +61,7 @@ class OrderRecordController extends Controller
         $data = $this->validatedData($request, $order->id);
         $order->update($this->withCalculatedPayments($data, (float) $order->payments()->sum('amount')));
         $this->syncOrderBalance($order);
+        $this->logActivity('update', 'orders', "Updated order #{$order->book_no}");
 
         return APIResponse::success('Order updated successfully', $order->fresh());
     }
@@ -66,6 +69,7 @@ class OrderRecordController extends Controller
     public function destroy(OrderRecord $order)
     {
         $order->delete();
+        $this->logActivity('delete', 'orders', "Deleted order #{$order->book_no}");
 
         return APIResponse::success('Order deleted successfully');
     }
@@ -94,6 +98,7 @@ class OrderRecordController extends Controller
 
             return $payment;
         });
+        $this->logActivity('pay', 'orders', "Recorded payment for order #{$order->book_no}");
 
         return APIResponse::success('Order payment recorded successfully', $payment, 201);
     }
@@ -111,7 +116,7 @@ class OrderRecordController extends Controller
             'total_amount' => 'required|numeric|min:0',
             'advance_received' => 'nullable|numeric|min:0',
             'comments' => 'nullable|string',
-            'status' => 'required|string|max:50',
+            'status' => 'required|in:pending,confirmed,delivered',
         ]);
     }
 

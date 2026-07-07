@@ -40,18 +40,17 @@ return new class extends Migration
             ]);
         }
 
-        foreach (['superadmin', 'admin', 'cashier'] as $role) {
+        foreach (['admin', 'cashier'] as $role) {
             DB::table('roles')->updateOrInsert(
                 ['name' => $role],
                 ['created_at' => now(), 'updated_at' => now()]
             );
         }
 
-        $roles = DB::table('roles')->whereIn('name', ['superadmin', 'admin', 'cashier'])->pluck('id', 'name');
+        $roles = DB::table('roles')->whereIn('name', ['admin', 'cashier'])->pluck('id', 'name');
 
         foreach ([
-            ['username' => 'superadmin', 'password' => 'superadmin', 'role' => 'superadmin'],
-            ['username' => 'user', 'password' => 'user', 'role' => 'admin'],
+            ['username' => 'admin', 'password' => 'admin', 'role' => 'admin'],
             ['username' => 'cashier', 'password' => 'cashier', 'role' => 'cashier'],
         ] as $user) {
             DB::table('users')->updateOrInsert(

@@ -46,6 +46,7 @@ class EmployeeController extends Controller
             'salary' => $employee->salary,
             'effective_from' => now()->toDateString(),
         ]);
+        $this->logActivity('create', 'employees', "Created employee {$employee->full_name}");
 
         return APIResponse::success('Employee created successfully', $employee, 201);
     }
@@ -81,6 +82,7 @@ class EmployeeController extends Controller
                 'effective_from' => now()->toDateString(),
             ]);
         }
+        $this->logActivity('update', 'employees', "Updated employee {$employee->full_name}");
 
         return APIResponse::success('Employee updated successfully', $employee);
     }
@@ -92,6 +94,7 @@ class EmployeeController extends Controller
         }
 
         $employee->delete();
+        $this->logActivity('delete', 'employees', "Deleted employee {$employee->full_name}");
 
         return APIResponse::success('Employee deleted successfully');
     }
@@ -129,6 +132,7 @@ class EmployeeController extends Controller
                 ['status' => $status]
             );
         }
+        $this->logActivity('update', 'employee_attendance', 'Updated attendance records');
 
         return APIResponse::success('Attendance saved successfully');
     }
@@ -151,6 +155,7 @@ class EmployeeController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'notes' => 'nullable|string|max:255',
         ]));
+        $this->logActivity('pay', 'employee_salaries', "Salary payment recorded for employee #{$payment->employee_id}");
 
         return APIResponse::success('Salary payment saved successfully', $payment, 201);
     }

@@ -7,10 +7,10 @@
     @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="mb-3">
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <a href="/{{ $module }}/create" class="btn btn-primary">Create Record</a>
             @endif
-            @if (in_array($role, ['superadmin', 'cashier']))
+            @if (in_array($role, ['admin', 'cashier']))
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#payModal">Pay</button>
             @endif
         </div>
@@ -59,7 +59,7 @@
                             <td>{{ $entry->created_at->format('d-m-Y') }}</td>
                             <td>{{ $entry->updated_at->format('d-m-Y') }}</td>
                             <td>
-                                @if ($role === 'superadmin')
+                                @if ($role === 'admin')
                                     <a href="/{{ $module }}/{{ $entry->id }}/edit" class="btn btn-sm btn-primary">Update</a>
                                     <button onclick="confirmDelete('/{{ $module }}/{{ $entry->id }}', '/{{ $module }}', 'Delete this record?')" class="btn btn-sm btn-danger">Delete</button>
                                 @else
@@ -79,7 +79,7 @@
         @endif
     </div>
 
-    @if (in_array($role, ['superadmin', 'cashier']))
+    @if (in_array($role, ['admin', 'cashier']))
     <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form class="modal-content" onsubmit="savePayment(event)">

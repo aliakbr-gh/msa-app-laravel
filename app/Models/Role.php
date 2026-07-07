@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    public const FIXED_ROLES = ['superadmin', 'admin', 'cashier'];
+    public const FIXED_ROLES = ['admin', 'cashier'];
 
     protected $fillable = [
         'name'
@@ -19,7 +19,7 @@ class Role extends Model
         }
 
         return self::whereIn('name', self::FIXED_ROLES)
-            ->orderByRaw("CASE name WHEN 'superadmin' THEN 1 WHEN 'admin' THEN 2 WHEN 'cashier' THEN 3 ELSE 4 END")
+            ->orderByRaw("CASE name WHEN 'admin' THEN 1 WHEN 'cashier' THEN 2 ELSE 3 END")
             ->get();
     }
 }

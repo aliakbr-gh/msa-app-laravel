@@ -7,7 +7,7 @@
     @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="d-flex flex-wrap gap-2 mb-3">
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <a href="/employees/create" class="btn btn-primary">Create Employee</a>
             @endif
             <a href="/employees/attendance" class="btn btn-outline-primary">Mark Attendance</a>
@@ -42,7 +42,7 @@
                             <td>{{ $employee->id }}</td>
                             <td>
                                 @if ($employee->picture)
-                                    <img src="{{ asset('storage/' . $employee->picture) }}" alt="{{ $employee->full_name }}" class="rounded" style="width: 54px; height: 54px; object-fit: cover;">
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($employee->picture) }}" alt="{{ $employee->full_name }}" class="rounded" style="width: 54px; height: 54px; object-fit: cover;">
                                 @else
                                     <span class="badge bg-secondary">No Image</span>
                                 @endif
@@ -53,7 +53,7 @@
                             <td>{{ $employee->created_at->format('d-m-Y') }}</td>
                             <td>{{ $employee->updated_at->format('d-m-Y') }}</td>
                             <td>
-                                @if ($role === 'superadmin')
+                                @if ($role === 'admin')
                                     <a href="/employees/{{ $employee->id }}/edit" class="btn btn-sm btn-primary">Update</a>
                                     <button onclick="confirmDelete('/employees/{{ $employee->id }}', '/employees', 'Delete this employee?')" class="btn btn-sm btn-danger">Delete</button>
                                 @else

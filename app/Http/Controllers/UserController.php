@@ -51,6 +51,7 @@ class UserController extends Controller
         }
 
         $user->update($data);
+        $this->logActivity('update', 'users', "Updated user {$user->username}");
 
         if ($toLogout) {
             Auth::logout();
@@ -69,6 +70,7 @@ class UserController extends Controller
         $deletedUser = User::findOrFail($id);
 
         $response = $deletedUser->delete();
+        $this->logActivity('delete', 'users', "Deleted user {$deletedUser->username}");
 
         return APIResponse::success('User deleted successfully', $response);
     }
@@ -95,6 +97,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'is_active' => 1,
         ]);
+        $this->logActivity('create', 'users', "Created user {$user->username}");
 
         return APIResponse::success('User created successfully', $user, 201);
     }

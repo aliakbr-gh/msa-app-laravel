@@ -37,6 +37,7 @@ class LedgerController extends Controller
 
         $entry = LedgerEntry::create($data);
         $this->recalculateBalances($module);
+        $this->logActivity('create', $module, "Created ledger record");
 
         return APIResponse::success('Record created successfully', $entry->fresh(), 201);
     }
@@ -58,6 +59,7 @@ class LedgerController extends Controller
             'opening_balance' => $lastEntry ? null : 0,
         ]);
         $this->recalculateBalances($module);
+        $this->logActivity('pay', $module, "Recorded payment in {$module}");
 
         return APIResponse::success('Payment recorded successfully', $entry->fresh(), 201);
     }
@@ -77,6 +79,7 @@ class LedgerController extends Controller
 
         $entry->update($this->validatedData($request, $module));
         $this->recalculateBalances($module);
+        $this->logActivity('update', $module, "Updated ledger record #{$entry->id}");
 
         return APIResponse::success('Record updated successfully', $entry->fresh());
     }
@@ -87,6 +90,7 @@ class LedgerController extends Controller
         $this->ensureModuleEntry($module, $entry);
         $entry->delete();
         $this->recalculateBalances($module);
+        $this->logActivity('delete', $module, "Deleted ledger record #{$entry->id}");
 
         return APIResponse::success('Record deleted successfully');
     }

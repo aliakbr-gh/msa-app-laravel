@@ -54,7 +54,7 @@
             @csrf
             <input type="hidden" name="attendance_date" value="{{ $date }}">
 
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <div class="d-flex flex-wrap gap-2 mb-3">
                     <button type="button" class="btn btn-sm btn-success" onclick="markAll('present')">Mark Page Present</button>
                     <button type="button" class="btn btn-sm btn-danger" onclick="markAll('absent')">Mark Page Absent</button>
@@ -82,7 +82,7 @@
                                 </td>
                                 <td>{{ number_format($employee->salary, 2) }}</td>
                                 <td>
-                                    <select name="attendance[{{ $employee->id }}]" class="form-select attendance-status {{ $status === 'absent' ? 'border-danger' : 'border-success' }}" {{ in_array($role, ['superadmin', 'admin']) ? '' : 'disabled' }}>
+                                    <select name="attendance[{{ $employee->id }}]" class="form-select attendance-status {{ $status === 'absent' ? 'border-danger' : 'border-success' }}" {{ $role === 'admin' ? '' : 'disabled' }}>
                                         <option value="present" {{ ($status ?? 'present') === 'present' ? 'selected' : '' }}>Present</option>
                                         <option value="absent" {{ $status === 'absent' ? 'selected' : '' }}>Absent</option>
                                     </select>
@@ -110,7 +110,7 @@
         @endif
     </div>
 
-    @if (in_array($role, ['superadmin', 'admin']))
+    @if ($role === 'admin')
     <script>
         function markAll(status) {
             $('.attendance-status').val(status).trigger('change');

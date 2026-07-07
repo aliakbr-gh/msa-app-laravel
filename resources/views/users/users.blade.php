@@ -8,7 +8,7 @@
 
     <div class="container mt-4">
         <div class="mb-3">
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <a href="/users/create" class="btn btn-primary">Create User</a>
             @endif
         </div>
@@ -61,7 +61,7 @@
                                 {{ \Carbon\Carbon::parse($user->updated_at)->format('d-m-Y') }}
                             </td>
                             <td>
-                                @if ($role === 'superadmin')
+                                @if ($role === 'admin')
                                     <a href="/users/{{ $user->id }}/edit" class="btn btn-sm btn-primary">Update</a>
                                     <button onclick="confirmDelete('/users/{{ $user->id }}', '/users', 'Delete this user?')" class="btn btn-sm btn-danger">Delete</button>
                                 @else

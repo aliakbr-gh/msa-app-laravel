@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 abstract class Controller
@@ -25,5 +27,20 @@ abstract class Controller
         }
 
         return $query;
+    }
+
+    protected function logActivity(string $action, ?string $module = null, ?string $description = null): void
+    {
+        $user = Auth::user();
+
+        ActivityLog::create([
+            'user_id' => $user?->id,
+            'username' => $user?->username,
+            'role_name' => $user?->role?->name,
+            'module' => $module,
+            'action' => $action,
+            'description' => $description,
+            'ip_address' => request()->ip(),
+        ]);
     }
 }

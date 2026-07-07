@@ -7,7 +7,7 @@
     @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="mb-3">
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <a href="/modules/create" class="btn btn-primary">Create Module</a>
             @endif
         </div>
@@ -42,7 +42,7 @@
                             <td>{{ $module->rate_label ?? '-' }}</td>
                             <td><span class="badge {{ $module->is_active ? 'bg-success' : 'bg-secondary' }}">{{ $module->is_active ? 'Active' : 'Inactive' }}</span></td>
                             <td>
-                                @if ($role === 'superadmin')
+                                @if ($role === 'admin')
                                     <a href="/modules/{{ $module->id }}/edit" class="btn btn-sm btn-primary">Update</a>
                                     <button onclick="confirmDelete('/modules/{{ $module->id }}', '/modules', 'Delete this module? Existing records will remain hidden unless recreated.')" class="btn btn-sm btn-danger">Delete</button>
                                 @else

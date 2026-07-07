@@ -7,7 +7,7 @@
     @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="mb-3">
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <a href="/kitchen/create" class="btn btn-primary">Create Kitchen Record</a>
             @endif
         </div>
@@ -15,8 +15,8 @@
             <div class="col-md-3"><input type="date" name="delivery_date" value="{{ $deliveryDate }}" class="form-control"></div>
             <div class="col-md-3"><input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control"></div>
             <div class="col-md-3"><input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control"></div>
-            <div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div>
-            <div class="col-md-1"><a href="/kitchen" class="btn btn-outline-secondary w-100">Reset</a></div>
+            <div class="col-md-1"><button class="btn btn-outline-primary w-100">Search</button></div>
+            <div class="col-md-2"><a href="/kitchen" class="btn btn-outline-secondary w-100">Reset</a></div>
         </form>
 
         <h5>Deliveries for {{ \Carbon\Carbon::parse($deliveryDate)->format('d-m-Y') }}</h5>
@@ -55,6 +55,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>S.No</th>
+                        <th>Delivery Date</th>
                         <th>Details</th>
                         <th>Order/Shop</th>
                         <th>Qty</th>
@@ -67,13 +68,14 @@
                     @forelse ($records as $record)
                         <tr>
                             <td>{{ $records->firstItem() + $loop->index }}</td>
+                            <td>{{ $record->delivery_date?->format('d-m-Y') ?? '-' }}</td>
                             <td class="text-start">{{ $record->details }}</td>
                             <td>{{ $record->order_shop }}</td>
                             <td>{{ number_format($record->qty, 2) }}</td>
                             <td>{{ $record->created_at->format('d-m-Y') }}</td>
                             <td>{{ $record->updated_at->format('d-m-Y') }}</td>
                             <td>
-                                @if ($role === 'superadmin')
+                                @if ($role === 'admin')
                                     <a href="/kitchen/{{ $record->id }}/edit" class="btn btn-sm btn-primary">Update</a>
                                     <button onclick="confirmDelete('/kitchen/{{ $record->id }}', '/kitchen', 'Delete this kitchen record?')" class="btn btn-sm btn-danger">Delete</button>
                                 @else
@@ -82,7 +84,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7">No kitchen records found.</td></tr>
+                        <tr><td colspan="8">No kitchen records found.</td></tr>
                     @endforelse
                 </tbody>
             </table>

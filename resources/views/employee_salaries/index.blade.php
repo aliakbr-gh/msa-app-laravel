@@ -6,7 +6,7 @@
 @section('content')
     @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
-        @if (in_array($role, ['superadmin', 'admin']))
+        @if ($role === 'admin')
         <form onsubmit="saveSalaryPayment(event)" class="row g-2 align-items-end mb-4">
             @csrf
             <div class="col-md-3">
@@ -77,7 +77,7 @@
         @endif
     </div>
 
-    @if (in_array($role, ['superadmin', 'admin']))
+    @if ($role === 'admin')
     <script>
         function saveSalaryPayment(e) {
             e.preventDefault();

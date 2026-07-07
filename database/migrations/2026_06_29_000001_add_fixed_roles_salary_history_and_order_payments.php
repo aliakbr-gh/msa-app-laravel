@@ -9,10 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::table('roles')->updateOrInsert(['name' => 'superadmin'], ['created_at' => now(), 'updated_at' => now()]);
         DB::table('roles')->updateOrInsert(['name' => 'admin'], ['created_at' => now(), 'updated_at' => now()]);
         DB::table('roles')->updateOrInsert(['name' => 'cashier'], ['created_at' => now(), 'updated_at' => now()]);
-        DB::table('roles')->whereNotIn('name', ['superadmin', 'admin', 'cashier'])->delete();
+        DB::table('roles')->whereNotIn('name', ['admin', 'cashier'])->delete();
 
         Schema::create('employee_salary_histories', function (Blueprint $table) {
             $table->id();

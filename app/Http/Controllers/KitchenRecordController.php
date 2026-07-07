@@ -11,10 +11,11 @@ class KitchenRecordController extends Controller
 {
     public function index(Request $request)
     {
-        $records = $this->applyDateRange(KitchenRecord::latest(), $request)
+        $deliveryDate = $request->query('delivery_date', now()->toDateString());
+        $records = KitchenRecord::whereDate('delivery_date', $deliveryDate)
+            ->latest()
             ->paginate($this->perPage($request))
             ->withQueryString();
-        $deliveryDate = $request->query('delivery_date', now()->toDateString());
         $todayOrders = OrderRecord::whereDate('order_delivery_date', $deliveryDate)
             ->orderBy('order_delivery_date')
             ->orderBy('book_no')
@@ -31,6 +32,7 @@ class KitchenRecordController extends Controller
     public function store(Request $request)
     {
         $record = KitchenRecord::create($this->validatedData($request));
+        $this->logActivity('create', 'kitchen', "Created kitchen record for {$record->delivery_date}");
 
         return APIResponse::success('Kitchen record created successfully', $record, 201);
     }
@@ -43,6 +45,7 @@ class KitchenRecordController extends Controller
     public function update(Request $request, KitchenRecord $record)
     {
         $record->update($this->validatedData($request));
+        $this->logActivity('update', 'kitchen', "Updated kitchen record #{$record->id}");
 
         return APIResponse::success('Kitchen record updated successfully', $record);
     }
@@ -50,6 +53,7 @@ class KitchenRecordController extends Controller
     public function destroy(KitchenRecord $record)
     {
         $record->delete();
+        $this->logActivity('delete', 'kitchen', "Deleted kitchen record #{$record->id}");
 
         return APIResponse::success('Kitchen record deleted successfully');
     }
@@ -57,6 +61,7 @@ class KitchenRecordController extends Controller
     private function validatedData(Request $request): array
     {
         return $request->validate([
+            'delivery_date' => 'required|date',
             'details' => 'required|string',
             'order_shop' => 'required|string|max:255',
             'qty' => 'required|numeric|min:0',

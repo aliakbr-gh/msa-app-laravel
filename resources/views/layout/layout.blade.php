@@ -52,40 +52,47 @@
                 <!-- Left side links -->
                 <ul class="navbar-nav me-auto">
                     @auth
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
-                                Dashboard
-                            </a>
-                        </li>
                         @php($currentRole = auth()->user()->role?->name)
-                        @if (in_array($currentRole, ['superadmin', 'admin', 'cashier']))
+                        @if ($currentRole === 'admin')
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
+                                    Dashboard
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/users">
                                     Users
                                 </a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->is('employees*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
+                                    Employees
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/employees">Employees</a></li>
+                                    <li><a class="dropdown-item" href="/employees/attendance">Attendance</a></li>
+                                    <li><a class="dropdown-item" href="/employees/attendance-report">Attendance Report</a></li>
+                                    <li><a class="dropdown-item" href="/employees/salaries">Salary Payments</a></li>
+                                    <li><a class="dropdown-item" href="/employees/report">Monthly Report</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">Orders</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->is('kitchen*') ? 'active' : '' }}" href="/kitchen">Kitchen</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->is('reports*') ? 'active' : '' }}" href="/reports">Reports</a></li>
+                            <li class="nav-item"><a class="nav-link {{ request()->is('modules*') ? 'active' : '' }}" href="/modules">Modules</a></li>
+                            @foreach (($ledgerModules ?? collect()) as $ledgerModule)
+                                <li class="nav-item"><a class="nav-link {{ request()->is($ledgerModule->slug . '*') ? 'active' : '' }}" href="/{{ $ledgerModule->slug }}">{{ $ledgerModule->title }}</a></li>
+                            @endforeach
+                            @if ($currentRole === 'admin')
+                                <li class="nav-item"><a class="nav-link" href="/backup/download">Backup</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/logs">Logs</a></li>
+                            @endif
                         @endif
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle {{ request()->is('employees*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown">
-                                Employees
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/employees">Employees</a></li>
-                                <li><a class="dropdown-item" href="/employees/attendance">Attendance</a></li>
-                                <li><a class="dropdown-item" href="/employees/attendance-report">Attendance Report</a></li>
-                                <li><a class="dropdown-item" href="/employees/salaries">Salary Payments</a></li>
-                                <li><a class="dropdown-item" href="/employees/report">Monthly Report</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('modules*') ? 'active' : '' }}" href="/modules">Modules</a></li>
-                        @foreach (($ledgerModules ?? collect()) as $ledgerModule)
-                            <li class="nav-item"><a class="nav-link {{ request()->is($ledgerModule->slug . '*') ? 'active' : '' }}" href="/{{ $ledgerModule->slug }}">{{ $ledgerModule->title }}</a></li>
-                        @endforeach
-                        <li class="nav-item"><a class="nav-link {{ request()->is('orders*') ? 'active' : '' }}" href="/orders">Orders</a></li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('kitchen*') ? 'active' : '' }}" href="/kitchen">Kitchen</a></li>
-                        <li class="nav-item"><a class="nav-link {{ request()->is('reports*') ? 'active' : '' }}" href="/reports">Reports</a></li>
-                        @if ($currentRole === 'superadmin')
-                            <li class="nav-item"><a class="nav-link" href="/backup/download">Backup</a></li>
+                        @if ($currentRole === 'cashier')
+                            <li class="nav-item"><a class="nav-link {{ request()->is('modules*') ? 'active' : '' }}" href="/modules">Modules</a></li>
+                            @foreach (($ledgerModules ?? collect()) as $ledgerModule)
+                                <li class="nav-item"><a class="nav-link {{ request()->is($ledgerModule->slug . '*') ? 'active' : '' }}" href="/{{ $ledgerModule->slug }}">{{ $ledgerModule->title }}</a></li>
+                            @endforeach
                         @endif
                     @endauth
 
@@ -123,10 +130,15 @@
                                 </li>
                             </ul>
                         </li>
+                        <button class="btn btn-secondary" onclick="toggleTheme()" id="themeBtn">
+                            Dark Mode
+                        </button>
                     @endauth
-                    <button class="btn btn-secondary" onclick="toggleTheme()" id="themeBtn">
-                        Dark Mode
-                    </button>
+                    @guest
+                        <button class="btn btn-secondary" onclick="toggleTheme()" id="themeBtn">
+                            Dark Mode
+                        </button>
+                    @endguest
                 </ul>
             </div>
         </div>

@@ -7,15 +7,16 @@
     @php($role = auth()->user()->role?->name)
     <div class="container mt-4">
         <div class="mb-3">
-            @if (in_array($role, ['superadmin', 'admin']))
+            @if ($role === 'admin')
                 <a href="/orders/create" class="btn btn-primary">Create Order</a>
             @endif
         </div>
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-3"><input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control"></div>
             <div class="col-md-3"><input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control"></div>
-            <div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div>
-            <div class="col-md-2"><a href="/orders" class="btn btn-outline-secondary w-100">Reset</a></div>
+            <div class="col-md-2"><input type="number" name="book_no" value="{{ request('book_no') }}" placeholder="Book No" class="form-control"></div>
+            <div class="col-md-1"><button class="btn btn-outline-primary w-100">Search</button></div>
+            <div class="col-md-1"><a href="/orders" class="btn btn-outline-secondary w-100">Reset</a></div>
         </form>
         @include('partials.per-page', ['paginator' => $orders])
 
@@ -51,10 +52,10 @@
                             <td><span class="badge bg-info text-dark">{{ ucfirst($order->status) }}</span></td>
                             <td>
                                 <a href="/orders/{{ $order->id }}/invoice" class="btn btn-sm btn-success">Invoice</a>
-                                @if (in_array($role, ['superadmin', 'cashier']) && (float) $order->balance > 0)
+                                @if (in_array($role, ['admin', 'cashier']) && (float) $order->balance > 0)
                                     <button class="btn btn-sm btn-warning" onclick="openPayModal({{ $order->id }}, '{{ $order->customer_name }}', {{ $order->balance }})">Pay</button>
                                 @endif
-                                @if ($role === 'superadmin')
+                                @if ($role === 'admin')
                                     <a href="/orders/{{ $order->id }}/edit" class="btn btn-sm btn-primary">Update</a>
                                     <button onclick="confirmDelete('/orders/{{ $order->id }}', '/orders', 'Delete this order?')" class="btn btn-sm btn-danger">Delete</button>
                                 @endif

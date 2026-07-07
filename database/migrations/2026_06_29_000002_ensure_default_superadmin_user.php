@@ -9,10 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         DB::table('roles')->updateOrInsert(
-            ['name' => 'superadmin'],
-            ['updated_at' => now(), 'created_at' => now()]
-        );
-        DB::table('roles')->updateOrInsert(
             ['name' => 'admin'],
             ['updated_at' => now(), 'created_at' => now()]
         );
@@ -21,14 +17,14 @@ return new class extends Migration
             ['updated_at' => now(), 'created_at' => now()]
         );
 
-        $superadminRoleId = DB::table('roles')->where('name', 'superadmin')->value('id');
+        $adminRoleId = DB::table('roles')->where('name', 'admin')->value('id');
 
         DB::table('users')->updateOrInsert(
-            ['username' => 'superadmin'],
+            ['username' => 'admin'],
             [
                 'phone' => null,
-                'role_id' => $superadminRoleId,
-                'password' => Hash::make('superadmin'),
+                'role_id' => $adminRoleId,
+                'password' => Hash::make('admin'),
                 'is_active' => 1,
                 'updated_at' => now(),
                 'created_at' => now(),
